@@ -1,23 +1,21 @@
 package io.github.koblizekxd.easygl.bootstrap;
 
 import io.github.koblizekxd.easygl.Application;
+import io.github.koblizekxd.easygl.api.behaviour.IBehaviour;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import java.nio.IntBuffer;
 
-import java.nio.*;
-
-import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public final class GameRuntime {
     private final Application app;
@@ -72,6 +70,9 @@ public final class GameRuntime {
             glfwSwapBuffers(window);
 
             app.loop();
+            for (IBehaviour script : app.getScriptHandler().getRunningScripts()) {
+                script.loop();
+            }
 
             glfwPollEvents();
         }
