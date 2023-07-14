@@ -1,9 +1,10 @@
 package io.github.koblizekxd.easygl.bootstrap;
 
 import io.github.koblizekxd.easygl.Application;
-import io.github.koblizekxd.easygl.api.behaviour.IBehaviour;
+import io.github.koblizekxd.easygl.api.behaviour.scripts.Script;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.io.IoBuilder;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -31,14 +32,15 @@ public final class GameRuntime {
         logger.info("Using EasyGL");
         logger.info("Running on LWJGL {}", Version.getVersion());
         logger.info("");
-        GLFWErrorCallback.createPrint(System.err).set();
+
+        GLFWErrorCallback.createPrint(IoBuilder.forLogger(logger).buildPrintStream()).set();
 
         if (!glfwInit()) logger.fatal("Application has failed to start: GLFW initialization failed");
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        window = glfwCreateWindow(300, 300, "Application", NULL, NULL);
         if (window == NULL)
             logger.fatal("Application has failed to start: Window initialization failed");
 
@@ -70,8 +72,12 @@ public final class GameRuntime {
             glfwSwapBuffers(window);
 
             app.loop();
-            for (IBehaviour script : app.getScriptHandler().getRunningScripts()) {
-                script.loop();
+            for (Script script : app.getScriptHandler().getRunningScripts()) {
+                if (!script.hasExecuted()) {
+                    script.getBehaviour().init();
+                    script.execute();
+                }
+                script.getBehaviour().loop();
             }
 
             glfwPollEvents();

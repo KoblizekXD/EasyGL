@@ -6,8 +6,8 @@ import io.github.koblizekxd.easygl.api.behaviour.IBehaviour;
 import java.util.*;
 
 public class ScriptHandler {
-    private final Map<String, IBehaviour> scripts;
-    private final List<IBehaviour> runningScripts;
+    private final Map<String, io.github.koblizekxd.easygl.api.behaviour.scripts.Script> scripts;
+    private final List<io.github.koblizekxd.easygl.api.behaviour.scripts.Script> runningScripts;
 
     public ScriptHandler() {
         scripts = new HashMap<>();
@@ -19,7 +19,7 @@ public class ScriptHandler {
             try {
                 IBehaviour beh = type.newInstance();
                 String name = type.getAnnotation(Script.class).value();
-                scripts.put(name, beh);
+                scripts.put(name, new io.github.koblizekxd.easygl.api.behaviour.scripts.Script(beh));
             } catch (InstantiationException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
@@ -28,14 +28,17 @@ public class ScriptHandler {
         }
     }
 
-    IBehaviour getScript(String name) {
+    io.github.koblizekxd.easygl.api.behaviour.scripts.Script getScript(String name) {
         return scripts.get(name);
     }
     public void execute(String name) {
         runningScripts.add(getScript(name));
     }
+    public void kill(String name) {
+        runningScripts.remove(getScript(name));
+    }
 
-    public List<IBehaviour> getRunningScripts() {
+    public List<io.github.koblizekxd.easygl.api.behaviour.scripts.Script> getRunningScripts() {
         return runningScripts;
     }
 }

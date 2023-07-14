@@ -15,7 +15,7 @@ dependencies {
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
     implementation("org.apache.logging.log4j:log4j-api:2.20.0")
-
+    implementation("org.apache.logging.log4j:log4j-iostreams:2.20.0")
 
     implementation("org.lwjgl", "lwjgl")
     implementation("org.lwjgl", "lwjgl-assimp")
